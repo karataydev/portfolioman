@@ -47,3 +47,5 @@ Stay tuned for updates as we continue to develop and refine PortfolioMan!
 - Remove dialog from addOrCalcualte buttons and use accordion to show form fields
 - Implement portfolio benchmark against other instruments
 - Find a way to get stock data and icon
+- Make My Portfolio title editable and from server
+- Find a way to calcualte current position
