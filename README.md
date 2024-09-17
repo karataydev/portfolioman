@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PortfolioMan
+
+## 🚧 Work in Progress 🚧
+
+PortfolioMan is an ongoing project aimed at creating a comprehensive portfolio management tool for investors. Please note that this project is currently under active development and many features are still being implemented or refined.
+
+## Project Overview
+
+PortfolioMan is designed to help investors track, analyze, and optimize their investment portfolios. It provides visual representations of portfolio performance, asset allocation, and comparative analysis against benchmarks.
+
+### Key Features (Planned/In Progress)
+
+- **Investment Growth Chart**: Visualize the growth of your investments over different time periods (week, month, 3 months, year).
+- **Portfolio Performance Analysis**: Compare your portfolio's performance against benchmarks.
+- **Asset Allocation View**: Understand and manage your portfolio's diversification.
+- **Transaction Tracking**: Log and view your investment transactions.
+- **Rebalancing Recommendations**: Get suggestions for rebalancing your portfolio to maintain your target allocation.
+
+## Current State
+
+The project is in its early stages. Many features are still to be implemented, and existing features may undergo significant changes as the project evolves.
+
+## Technologies Used
+
+- React
+- TypeScript
+- Recharts for data visualization
+- Shadcn UI for component styling
 
 ## Getting Started
 
-First, run the development server:
+As this project is a work in progress, setup instructions will be provided once the project reaches a more stable state.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Contributing
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+While we're not currently accepting contributions, we appreciate your interest in the project. Feel free to star or watch the repository for updates.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Disclaimer
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This project is for educational and demonstration purposes only. It is not intended to provide financial advice. Always consult with a qualified financial advisor before making investment decisions.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+Stay tuned for updates as we continue to develop and refine PortfolioMan!
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## TODO
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Remove dialog from addOrCalcualte buttons and use accordion to show form fields
+- Implement portfolio benchmark against other instruments
+- Find a way to get stock data and icon
