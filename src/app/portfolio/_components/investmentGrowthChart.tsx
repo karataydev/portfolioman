@@ -1,4 +1,6 @@
-import { useState, useMemo } from "react";
+"use client";
+
+import { useState, useMemo, useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -13,13 +15,14 @@ import {
   ArrowUpRightIcon,
   ArrowDownRightIcon,
 } from "@heroicons/react/24/solid";
+import { Loader2 } from "lucide-react"; // Import the loading spinner
 
 interface DataPoint {
   timestamp: number;
   value: number;
 }
 
-interface InvestmentGrowthChartProps {
+interface InvestmentGrowthChartResponse {
   weekData: DataPoint[];
   monthData: DataPoint[];
   threeMonthData: DataPoint[];
@@ -36,15 +39,13 @@ const formatDate = (timestamp: number): string => {
   return date.toLocaleDateString("en-US", { day: "numeric", month: "short" });
 };
 
-const CustomCursor = ({
-  x,
-  y,
-  payload,
-}: {
+interface CustomCursorProps {
   x: number;
   y: number;
-  payload: any[];
-}) => {
+  payload: Array<{ payload: { timestamp: number } }>;
+}
+
+const CustomCursor = ({ x, payload }: CustomCursorProps) => {
   if (payload && payload.length > 0) {
     const timestamp = payload[0].payload.timestamp;
     const formattedDate = formatDate(timestamp);
@@ -65,34 +66,50 @@ const CustomCursor = ({
   return null;
 };
 
-export const InvestmentGrowthChart: React.FC<InvestmentGrowthChartProps> = ({
-  weekData,
-  monthData,
-  threeMonthData,
-  yearData,
-}) => {
+export function InvestmentGrowthChart({
+  portfolioId,
+}: {
+  portfolioId: string | undefined;
+}) {
   const [selectedPeriod, setSelectedPeriod] = useState<string>("week");
   const [selectedPrice, setSelectedPrice] = useState<number | null>(null);
+  const [response, setResponse] =
+    useState<InvestmentGrowthChartResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const getData = () => {
+  const data = useMemo(() => {
+    if (!response) return [];
     switch (selectedPeriod) {
       case "week":
-        return [initialData, ...weekData];
+        return [initialData, ...response.weekData];
       case "month":
-        return monthData;
+        return [initialData, ...response.monthData];
       case "threeMonth":
-        return threeMonthData;
+        return [initialData, ...response.threeMonthData];
       case "year":
-        return yearData;
+        return [initialData, ...response.yearData];
       default:
-        return weekData;
+        return [initialData, ...response.weekData];
     }
-  };
+  }, [selectedPeriod, response]);
 
-  const data = useMemo(
-    () => getData(),
-    [selectedPeriod, weekData, monthData, threeMonthData, yearData],
-  );
+  useEffect(() => {
+    async function fetchInvestmentGrowth() {
+      setIsLoading(true);
+      try {
+        const investmentGrowthChartResponse = await fetch(
+          `/api/portfolio-allocations/investment-growth-calculate?portfolioId=${portfolioId}`,
+        ).then((resp) => resp.json());
+        setResponse(await investmentGrowthChartResponse);
+      } catch (error) {
+        console.error("Error fetching investment growth data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    if (portfolioId) fetchInvestmentGrowth();
+  }, [portfolioId]);
+
   const latestPrice = useMemo(
     () => data[data?.length - 1]?.value || 1000,
     [data],
@@ -165,36 +182,44 @@ export const InvestmentGrowthChart: React.FC<InvestmentGrowthChartProps> = ({
           </span>
         </div>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={data}
-            margin={{ top: 20, right: 5, left: 5, bottom: 5 }}
-            onMouseMove={(e) => {
-              if (e.activePayload) {
-                setSelectedPrice(e.activePayload[0].value);
-              }
-            }}
-            onMouseLeave={() => setSelectedPrice(null)}
-          >
-            <XAxis dataKey="timestamp" hide={true} />
-            <YAxis hide={true} domain={yAxisDomain} />
-            <Tooltip
-              content={<CustomCursor />}
-              cursor={{
-                stroke: "#888888",
-                strokeWidth: 1,
-                strokeDasharray: "5 5",
+          {isLoading ? (
+            <div className="w-full h-full flex items-center justify-center">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <LineChart
+              data={data}
+              margin={{ top: 20, right: 5, left: 5, bottom: 5 }}
+              onMouseMove={(e) => {
+                if (e.activePayload) {
+                  setSelectedPrice(e.activePayload[0].value);
+                }
               }}
-            />
-            <ReferenceLine y={1000} stroke="#888888" strokeDasharray="3 3" />
-            <Line
-              type="monotone"
-              dataKey="value"
-              stroke="#3a7bd5"
-              dot={false}
-              strokeWidth={2.5}
-              activeDot={{ r: 8 }}
-            />
-          </LineChart>
+              onMouseLeave={() => setSelectedPrice(null)}
+            >
+              <XAxis dataKey="timestamp" hide={true} />
+              <YAxis hide={true} domain={yAxisDomain} />
+              <Tooltip
+                content={({ x, y, payload }) => (
+                  <CustomCursor x={x} y={y} payload={payload} />
+                )}
+                cursor={{
+                  stroke: "#888888",
+                  strokeWidth: 1,
+                  strokeDasharray: "5 5",
+                }}
+              />
+              <ReferenceLine y={1000} stroke="#888888" strokeDasharray="3 3" />
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke="#3a7bd5"
+                dot={false}
+                strokeWidth={2.5}
+                activeDot={{ r: 8 }}
+              />
+            </LineChart>
+          )}
         </ResponsiveContainer>
       </div>
       <ToggleGroup
@@ -210,4 +235,4 @@ export const InvestmentGrowthChart: React.FC<InvestmentGrowthChartProps> = ({
       </ToggleGroup>
     </div>
   );
-};
+}

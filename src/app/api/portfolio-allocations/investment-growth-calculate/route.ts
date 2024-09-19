@@ -133,18 +133,12 @@ export async function GET(request: Request) {
   const portfolioId = searchParams.get("portfolioId");
   const period = searchParams.get("period");
 
-  if (!portfolioId) {
-    return NextResponse.json(
-      { error: "Portfolio ID is required" },
-      { status: 400 },
-    );
-  }
-
-  if (!period) {
-    return NextResponse.json({ error: "Period is required" }, { status: 400 });
-  }
-
-  return NextResponse.json({ data: getData(period) });
+  return NextResponse.json({
+    weekData: getData("week"),
+    monthData: getData("month"),
+    threeMonthData: getData("threeMonth"),
+    yearData: getData("year"),
+  });
 
   // try {
   //   const allocations =

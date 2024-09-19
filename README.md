@@ -49,3 +49,4 @@ Stay tuned for updates as we continue to develop and refine PortfolioMan!
 - Find a way to get stock data and icon
 - Make My Portfolio title editable and from server
 - Find a way to calcualte current position
+- Latest transactions section
