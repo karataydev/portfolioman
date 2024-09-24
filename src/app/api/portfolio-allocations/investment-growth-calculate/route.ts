@@ -133,12 +133,21 @@ export async function GET(request: Request) {
   const portfolioId = searchParams.get("portfolioId");
   const period = searchParams.get("period");
 
-  return NextResponse.json({
-    weekData: getData("week"),
-    monthData: getData("month"),
-    threeMonthData: getData("threeMonth"),
-    yearData: getData("year"),
-  });
+  return NextResponse.json(
+    {
+      weekData: getData("week"),
+      monthData: getData("month"),
+      threeMonthData: getData("threeMonth"),
+      yearData: getData("year"),
+    },
+    {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    },
+  );
 
   // try {
   //   const allocations =

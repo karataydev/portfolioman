@@ -479,13 +479,25 @@ export async function GET(request: Request) {
   const portfolioId = searchParams.get("portfolioId");
 
   if (!portfolioId) {
-    return NextResponse.json(
-      { error: "Portfolio ID is required" },
-      { status: 400 },
+    return new NextResponse(
+      JSON.stringify({ error: "Portfolio ID is required" }),
+      {
+        status: 400,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      }
     );
   }
 
-  return NextResponse.json(portfolio);
+  return new NextResponse(JSON.stringify(portfolio), {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+    },
+  });
 
   // try {
   //   const allocations =

@@ -5,6 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -33,12 +34,12 @@ export function AddOrCalculateButtonGroup({
             variant="third"
             className="px-4 flex-grow md:flex-grow-0 md:px-8 md:py-4"
           >
-            Add New Stock
+            Add Transaction
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Add New Stock</DialogTitle>
+            <DialogTitle>Add Transaction</DialogTitle>
           </DialogHeader>
           <form onSubmit={addStock} className="space-y-4">
             <div>
@@ -47,17 +48,15 @@ export function AddOrCalculateButtonGroup({
             </div>
             <div>
               <Label htmlFor="shares">Number of Shares</Label>
-              <Input id="shares" type="number" required />
+              <Input id="shares" type="number" step=".001" required />
             </div>
             <div>
               <Label htmlFor="currentPrice">Current Price</Label>
-              <Input id="currentPrice" type="number" required />
+              <Input id="currentPrice" type="number" step=".001" required />
             </div>
-            <div>
-              <Label htmlFor="percentage">Target Percentage</Label>
-              <Input id="percentage" type="number" required />
-            </div>
-            <Button type="submit">Add Stock</Button>
+            <DialogFooter>
+              <Button type="submit">Add Transaction</Button>
+            </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
@@ -77,19 +76,9 @@ export function AddOrCalculateButtonGroup({
               <Label htmlFor="purchaseAmount">Purchase Amount ($)</Label>
               <Input id="purchaseAmount" type="number" />
             </div>
-            <Button onClick={calculatePurchase}>Calculate</Button>
-            {purchaseRecommendation.length > 0 && (
-              <div>
-                <h3 className="font-semibold mb-2">Recommendation:</h3>
-                <ul>
-                  {purchaseRecommendation.map((item) => (
-                    <li key={item.symbol}>
-                      {item.symbol}: {item.sharesToBuy} shares
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            <DialogFooter>
+              <Button onClick={calculatePurchase}>Calculate</Button>
+            </DialogFooter>
           </div>
         </DialogContent>
       </Dialog>
