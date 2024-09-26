@@ -1,10 +1,13 @@
 import { db } from '@/lib/db';
+import { Asset } from './Asset';
 
 export interface PortfolioAllocation {
   id: string;
   portfolio_id: string;
-  asset_id: string;
+  asset: Asset;
   target_percentage: number;
+  current_percentage: number;
+  amount: number;
 }
 
 export const PortfolioAllocationModel = {

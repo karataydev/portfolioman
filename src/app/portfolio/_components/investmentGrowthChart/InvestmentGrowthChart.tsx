@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
   ReferenceLine,
   Line,
+  Tooltip,
 } from "recharts";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
@@ -19,6 +20,7 @@ import * as chartData from "./chartData";
 import { ChartTooltip } from "./chartTooltip";
 import { renderChartLines } from "./chartLine";
 import { calculatePercentage } from "@/lib/utils";
+import { ChartCustomContent } from "./ChartCustomContent";
 
 export function InvestmentGrowthChart({
   portfolioId,
@@ -90,6 +92,11 @@ export function InvestmentGrowthChart({
     return chartData.selectData(selectedPeriod, comparisonData);
   }, [selectedPeriod, comparisonData]);
 
+  const latestComparisonPrice = useMemo(
+    () => compareData[compareData?.length - 1]?.value || 1000,
+    [compareData],
+  );
+
   const allData = useMemo(() => {
     const mainData = data.map((d) => ({ ...d, main: d.value }));
     compareData.forEach((point, index) => {
@@ -126,9 +133,12 @@ export function InvestmentGrowthChart({
               : calculatePercentage(latestPrice, initialValue).toFixed(2)}
             %
           </span>
-          {selectedComparedAsset && selectedComparedPrice && (
+          {selectedComparedAsset && (
             <p className="text-sm mt-1 text-start text-second tracking-normal font-normal">
-              Compared: ${selectedComparedPrice.toFixed(2)}
+              Compared: $
+              {selectedComparedPrice !== null
+                ? selectedComparedPrice.toFixed(2)
+                : latestComparisonPrice.toFixed(2)}
             </p>
           )}
         </div>
@@ -154,7 +164,20 @@ export function InvestmentGrowthChart({
             >
               <XAxis dataKey="timestamp" hide={true} />
               <YAxis hide={true} domain={yAxisDomain} />
-              <ChartTooltip />
+              <Tooltip
+                content={(props) => (
+                  <ChartCustomContent
+                    active={props.active}
+                    coordinate={props.coordinate}
+                    payload={props.payload}
+                  />
+                )}
+                cursor={{
+                  stroke: "#888888",
+                  strokeWidth: 1,
+                  strokeDasharray: "5 5",
+                }}
+              />
               <ReferenceLine y={1000} stroke="#888888" strokeDasharray="3 3" />
               {renderChartLines(selectedComparedAsset)}
             </LineChart>

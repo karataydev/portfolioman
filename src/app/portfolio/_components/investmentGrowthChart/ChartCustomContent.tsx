@@ -1,14 +1,10 @@
 import { formatDate } from "@/lib/utils";
 
-interface CustomCursorProps {
-  x: number;
-  y: number;
-  payload: Array<{ payload: { timestamp: number } }>;
-}
-
-export const CustomCursor = ({ x, payload }: CustomCursorProps) => {
-  if (payload && payload.length > 0) {
-    const timestamp = payload[0].payload.timestamp;
+export const ChartCustomContent = ({ active, coordinate, payload }) => {
+  if (active && payload && payload.length) {
+    const x = coordinate?.x ?? 0;
+    const payloadPoint = payload[0].payload;
+    const timestamp = payloadPoint.timestamp;
     const formattedDate = formatDate(timestamp);
     return (
       <g>

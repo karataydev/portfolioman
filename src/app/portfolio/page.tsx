@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { PortfolioAllocation } from "@/models/PortfolioAllocation";
 import { Transaction } from "@/models/Transaction";
 import { AddOrCalculateButtonGroup } from "./_components/addOrCalculateButtonGroup";
-import { ToggledAllocationsCard } from "./_components/toggledAllocationsCard";
-import { InvestmentGrowthChart } from "./_components/investmentGrowthChart/investmentGrowthChart";
+import { ToggledAllocationsCard } from "./_components/toggledAllocationsCard/ToggledAllocationsCard";
+import { InvestmentGrowthChart } from "./_components/investmentGrowthChart/InvestmentGrowthChart";
 import {
   Dialog,
   DialogContent,
@@ -111,7 +111,7 @@ export default function Portfolio() {
           onSelect={setSelectedComparedSymbol}
           onRemove={() => setSelectedComparedSymbol("")}
         />
-        <ToggledAllocationsCard />
+        <ToggledAllocationsCard portfolio={portfolio} />
         <AddOrCalculateButtonGroup
           addStock={addStock}
           calculatePurchase={calculatePurchase}

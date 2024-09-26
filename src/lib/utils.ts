@@ -13,3 +13,10 @@ export const formatDate = (timestamp: number): string => {
 export const calculatePercentage = (value: number, initialValue: number) => {
   return ((value - initialValue) / initialValue) * 100;
 };
+
+export function formatCurrency(value: number): string {
+  return value.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}

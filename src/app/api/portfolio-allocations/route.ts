@@ -9,16 +9,224 @@ const portfolio = {
   created_at: Date.now(),
   updated_at: Date.now() + 2,
   portfolioAllocations: [
-    { id: 1, portfolio_id: 1, asset_id: 1, target_percentage: 20 },
-    { id: 2, portfolio_id: 1, asset_id: 2, target_percentage: 30 },
-    { id: 3, portfolio_id: 1, asset_id: 3, target_percentage: 10 },
-    { id: 4, portfolio_id: 1, asset_id: 4, target_percentage: 5 },
-    { id: 5, portfolio_id: 1, asset_id: 5, target_percentage: 5 },
-    { id: 6, portfolio_id: 1, asset_id: 6, target_percentage: 20 },
-    { id: 7, portfolio_id: 1, asset_id: 7, target_percentage: 2 },
-    { id: 8, portfolio_id: 1, asset_id: 8, target_percentage: 2 },
-    { id: 9, portfolio_id: 1, asset_id: 9, target_percentage: 2 },
-    { id: 10, portfolio_id: 1, asset_id: 10, target_percentage: 4 },
+    {
+      id: 1,
+      portfolio_id: 1,
+      asset: {
+        id: 1,
+        name: "APPL",
+      },
+      target_percentage: 20,
+      current_percentage: 20.1,
+      amount: 200,
+    },
+    {
+      id: 2,
+      portfolio_id: 1,
+      asset: {
+        id: 2,
+        name: "SP500",
+      },
+      target_percentage: 30,
+      current_percentage: 29.9,
+    },
+    {
+      id: 3,
+      portfolio_id: 1,
+      asset: {
+        id: 3,
+        name: "MTV",
+      },
+      target_percentage: 10,
+      current_percentage: 5,
+      amount: 200,
+    },
+    {
+      id: 4,
+      portfolio_id: 1,
+      asset: {
+        id: 4,
+        name: "EUR",
+      },
+      target_percentage: 5,
+      current_percentage: 10,
+      amount: 200,
+    },
+    {
+      id: 5,
+      portfolio_id: 1,
+      asset: {
+        id: 5,
+        name: "HEPS",
+      },
+      target_percentage: 5,
+      current_percentage: 5,
+      amount: 200,
+    },
+    {
+      id: 6,
+      portfolio_id: 1,
+      asset: {
+        id: 6,
+        name: "USD",
+      },
+      target_percentage: 20,
+      current_percentage: 9,
+      amount: 200,
+    },
+    {
+      id: 7,
+      portfolio_id: 1,
+      asset: {
+        id: 7,
+        name: "GOLD g",
+      },
+      target_percentage: 2,
+      current_percentage: 13,
+      amount: 200,
+    },
+    {
+      id: 8,
+      portfolio_id: 1,
+      asset: {
+        id: 8,
+        name: "ALPHABET",
+      },
+      target_percentage: 2,
+      current_percentage: 1,
+      amount: 200,
+    },
+    {
+      id: 9,
+      portfolio_id: 1,
+      asset: {
+        id: 9,
+        name: "META",
+      },
+      target_percentage: 2,
+      current_percentage: 4,
+      amount: 200,
+    },
+    {
+      id: 10,
+      portfolio_id: 1,
+      asset: {
+        id: 10,
+        name: "NVIDIA",
+      },
+      target_percentage: 4,
+      current_percentage: 3,
+      amount: 200,
+    },
+    {
+      id: 1,
+      portfolio_id: 1,
+      asset: {
+        id: 1,
+        name: "APPL",
+      },
+      target_percentage: 20,
+      current_percentage: 20.1,
+      amount: 200,
+    },
+    {
+      id: 2,
+      portfolio_id: 1,
+      asset: {
+        id: 2,
+        name: "SP500",
+      },
+      target_percentage: 30,
+      current_percentage: 29.9,
+    },
+    {
+      id: 3,
+      portfolio_id: 1,
+      asset: {
+        id: 3,
+        name: "MTV",
+      },
+      target_percentage: 10,
+      current_percentage: 5,
+      amount: 200,
+    },
+    {
+      id: 4,
+      portfolio_id: 1,
+      asset: {
+        id: 4,
+        name: "EUR",
+      },
+      target_percentage: 5,
+      current_percentage: 10,
+      amount: 200,
+    },
+    {
+      id: 5,
+      portfolio_id: 1,
+      asset: {
+        id: 5,
+        name: "HEPS",
+      },
+      target_percentage: 5,
+      current_percentage: 5,
+      amount: 200,
+    },
+    {
+      id: 6,
+      portfolio_id: 1,
+      asset: {
+        id: 6,
+        name: "USD",
+      },
+      target_percentage: 20,
+      current_percentage: 9,
+      amount: 200,
+    },
+    {
+      id: 7,
+      portfolio_id: 1,
+      asset: {
+        id: 7,
+        name: "GOLD g",
+      },
+      target_percentage: 2,
+      current_percentage: 13,
+      amount: 200,
+    },
+    {
+      id: 8,
+      portfolio_id: 1,
+      asset: {
+        id: 8,
+        name: "ALPHABET",
+      },
+      target_percentage: 2,
+      current_percentage: 1,
+      amount: 200,
+    },
+    {
+      id: 9,
+      portfolio_id: 1,
+      asset: {
+        id: 9,
+        name: "META",
+      },
+      target_percentage: 2,
+      current_percentage: 4,
+      amount: 200,
+    },
+    {
+      id: 10,
+      portfolio_id: 1,
+      asset: {
+        id: 10,
+        name: "NVIDIA",
+      },
+      target_percentage: 4,
+      current_percentage: 3,
+      amount: 200,
+    },
   ],
   transactions: [
     {
@@ -484,18 +692,18 @@ export async function GET(request: Request) {
       {
         status: 400,
         headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
         },
-      }
+      },
     );
   }
 
   return new NextResponse(JSON.stringify(portfolio), {
     status: 200,
     headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
     },
   });
 

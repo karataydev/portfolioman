@@ -46,10 +46,12 @@ Stay tuned for updates as we continue to develop and refine PortfolioMan!
 
 -- frontend
 
-[ ] Remove dialog from addOrCalcualte buttons and use accordion to show form fields
-[ ] Implement portfolio benchmark against other instruments
+[X] Remove dialog from addOrCalcualte buttons and use accordion to show form fields
+[X] Implement portfolio benchmark against other instruments
 [X] Make My Portfolio title editable and from server
 [ ] Latest transactions section
+[ ] Portfolio set or edit target percentages page or dialog
+
 
 --backend
 [ ] Find a way to calculate current position
