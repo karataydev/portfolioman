@@ -28,14 +28,14 @@ export function getAllocationsData(portfolio: Portfolio): AllocationsData {
     color: colors[index % colors.length],
   });
 
-  const target: Asset[] = portfolio.portfolioAllocations.map(
+  const target: Asset[] = portfolio.allocations.map(
     (allocation, index) => ({
       ...convertToResponseAsset(allocation, index),
       percentage: allocation.target_percentage,
     }),
   );
 
-  const current: Asset[] = portfolio.portfolioAllocations.map(
+  const current: Asset[] = portfolio.allocations.map(
     (allocation, index) => ({
       ...convertToResponseAsset(allocation, index),
       percentage: allocation.current_percentage,

@@ -7,25 +7,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-
-interface ComparisonSelectorProps {
-  selectedAsset: string | null;
-  onSelect: (symbol: string) => void;
-  onRemove: () => void;
-}
-
-const AVAILABLE_ASSETS = [
-  "AAPL",
-  "GOOGL",
-  "MSFT",
-  "AMZN",
-  "FB",
-  "TSLA",
-  "NVDA",
-  "JPM",
-  "V",
-  "JNJ",
-];
+import { AVAILABLE_ASSETS, ComparisonSelectorProps } from "./comparisonSelectorData";
 
 export function ComparisonSelector({
   selectedAsset,

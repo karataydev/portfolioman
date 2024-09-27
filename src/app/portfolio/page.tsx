@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BiEditAlt } from "react-icons/bi";
-import { ComparisonSelector } from "./_components/comparisonSelector";
+import { ComparisonSelector } from "./_components/comparisonSelector/ComparisonSelector";
 
 export interface Portfolio {
   id: string;
@@ -25,7 +25,7 @@ export interface Portfolio {
   description: string | null;
   created_at: Date;
   updated_at: Date;
-  portfolioAllocations: Array<PortfolioAllocation>;
+  allocations: Array<PortfolioAllocation>;
   transactions: Array<Transaction>;
 }
 
@@ -42,7 +42,9 @@ export default function Portfolio() {
 
   useEffect(() => {
     async function fetchAssets() {
-      const response = await fetch("/api/portfolio-allocations?portfolioId=1"); // Assuming portfolio ID 1
+      const response = await fetch(
+        "http://localhost:8080/api/portfolio/1/allocations",
+      ); // Assuming portfolio ID 1
       const data = await response.json();
       setPortfolio(data);
     }
