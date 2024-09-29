@@ -6,7 +6,7 @@ export function ScrollableAssetList({
   assets,
   activeIndex,
   setActiveIndex,
-  scrollAreaRef
+  scrollAreaRef,
 }: {
   assets: Asset[];
   activeIndex: number | undefined;
@@ -32,7 +32,7 @@ export function ScrollableAssetList({
               className="w-4 h-4 rounded-full"
               style={{ backgroundColor: asset.color }}
             ></div>
-            <span className="pl-2 select-none">{asset.name}</span>
+            <span className="pl-2 select-none">{asset.symbol}</span>
           </div>
           <div className="flex items-center w-full">
             <Progress
