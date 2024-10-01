@@ -21,6 +21,7 @@ import { ComparisonSelector } from "./_components/comparisonSelector/ComparisonS
 export interface Portfolio {
   id: string;
   user_id: string;
+  symbol: string;
   name: string;
   description: string | null;
   created_at: Date;
@@ -42,8 +43,14 @@ export default function Portfolio() {
 
   useEffect(() => {
     async function fetchAssets() {
+      const token = localStorage.getItem("auth_token");
       const response = await fetch(
         "http://localhost:8080/api/portfolio/1/allocations",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       ); // Assuming portfolio ID 1
       const data = await response.json();
       setPortfolio(data);
@@ -67,10 +74,13 @@ export default function Portfolio() {
   const handleSave = async () => {
     if (!portfolio) return;
     try {
+      const token = localStorage.getItem("auth_token");
+
       const response = await fetch(`/api/portfolio/${portfolio.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ name: editedName }),
       });
@@ -102,7 +112,7 @@ export default function Portfolio() {
             </span>
           </h1>
           <InvestmentGrowthChart
-            portfolioId={portfolio?.id}
+            portfolioSymbol={portfolio?.symbol}
             selectedComparedAsset={selectedComparedSymbol}
           />
         </div>

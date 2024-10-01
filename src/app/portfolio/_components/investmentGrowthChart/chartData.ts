@@ -14,8 +14,14 @@ export async function fetchInvestmentGrowth(
   symbol: string,
 ): Promise<InvestmentGrowthChartResponse> {
   try {
+    const token = localStorage.getItem("auth_token");
     const response = await fetch(
-      `/api/portfolio-allocations/investment-growth-calculate?symbol=${symbol}`,
+      `http://localhost:8080/api/investment-growth/${symbol}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      },
     );
     return (await response.json()) as InvestmentGrowthChartResponse;
   } catch (error) {

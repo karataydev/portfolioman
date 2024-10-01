@@ -45,14 +45,15 @@ Stay tuned for updates as we continue to develop and refine PortfolioMan!
 ## TODO
 
 -- frontend
-
-[X] Remove dialog from addOrCalcualte buttons and use accordion to show form fields
-[X] Implement portfolio benchmark against other instruments
-[X] Make My Portfolio title editable and from server
-[ ] Latest transactions section
-[ ] Portfolio set or edit target percentages page or dialog
+ - use new backend api
+ - make it only client side
+ - sign in page or home page with sign in buttons
+ - portfolio create page/dialog
+ - portfolio update page/dialog use same as create or update on the portfolio page
 
 
 --backend
-[ ] Find a way to calculate current position
-[ ] Find a way to get stock data and icon
+ - portfolio create update api
+ - add transaction api
+ - calculate new buy api
+ - store jwt on backend to revoke?

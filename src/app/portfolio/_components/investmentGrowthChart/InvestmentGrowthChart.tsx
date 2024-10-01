@@ -17,16 +17,15 @@ import {
 } from "@heroicons/react/24/solid";
 import { Loader2 } from "lucide-react"; // Import the loading spinner
 import * as chartData from "./chartData";
-import { ChartTooltip } from "./chartTooltip";
 import { renderChartLines } from "./chartLine";
 import { calculatePercentage } from "@/lib/utils";
 import { ChartCustomContent } from "./ChartCustomContent";
 
 export function InvestmentGrowthChart({
-  portfolioId,
+  portfolioSymbol,
   selectedComparedAsset,
 }: {
-  portfolioId: string | null;
+  portfolioSymbol: string | undefined;
   selectedComparedAsset: string | null;
 }) {
   const initialValue = 1000;
@@ -44,14 +43,14 @@ export function InvestmentGrowthChart({
   }, [selectedPeriod, response]);
 
   useEffect(() => {
-    if (portfolioId) {
+    if (portfolioSymbol) {
       setIsLoading(true);
       chartData
-        .fetchInvestmentGrowth(portfolioId)
+        .fetchInvestmentGrowth(portfolioSymbol)
         .then(setResponse)
         .finally(() => setIsLoading(false));
     }
-  }, [portfolioId]);
+  }, [portfolioSymbol]);
 
   const latestPrice = useMemo(
     () => data[data?.length - 1]?.value || 1000,
