@@ -7,6 +7,7 @@ export interface Asset {
   percentage: number;
   amount?: number;
   color: string;
+  unrealized_pl?: number;
 }
 
 export interface AllocationsData {
@@ -26,6 +27,7 @@ export function getAllocationsData(portfolio: Portfolio): AllocationsData {
     percentage: 0, // This will be set differently for target and current
     amount: allocation.amount,
     color: colors[index % colors.length],
+    unrealized_pl: allocation.unrealized_pl
   });
 
   const target: Asset[] = portfolio.allocations.map(

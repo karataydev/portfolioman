@@ -3,10 +3,19 @@ import { useEffect, useState, useMemo, useRef } from "react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Portfolio } from "../../page";
-import { AllocationsData, Asset, calculateTotalPortfolioValue, getAllocationsData } from "./allocationsData";
+import {
+  AllocationsData,
+  Asset,
+  calculateTotalPortfolioValue,
+  getAllocationsData,
+} from "./allocationsData";
 import { PieChartComponent } from "./PieChartComponent";
 import { ScrollableAssetList } from "./ScrollableAssetList";
 import { formatCurrency } from "@/lib/utils";
+import {
+  ArrowDownRightIcon,
+  ArrowUpRightIcon,
+} from "@heroicons/react/24/solid";
 
 export function ToggledAllocationsCard({
   portfolio,
@@ -38,6 +47,15 @@ export function ToggledAllocationsCard({
     [allocations],
   );
 
+  const totalUnrealizedPL = useMemo(
+    () =>
+      allocations?.current.reduce(
+        (sum, asset) => sum + (asset.unrealized_pl || 0),
+        0,
+      ) || 0,
+    [allocations],
+  );
+
   const handlePieScroll = (index: number) => {
     setActiveIndex(index);
     if (scrollAreaRef.current) {
@@ -55,8 +73,28 @@ export function ToggledAllocationsCard({
       <div className="w-full flex flex-col px-4 py-4">
         <h2 className="text-xl font-semibold mb-2">Portfolio Value</h2>
         <div className="flex justify-between items-center">
-          <div className="font-semibold text-2xl text-foreground tracking-wider">
-            ${formatCurrency(totalPortfolioValue)}
+          <div className="flex flex-col">
+            <div className="font-semibold text-2xl text-foreground tracking-wider">
+              ${formatCurrency(totalPortfolioValue)}
+            </div>
+
+            <div className="text-sm text-second">
+              P/L:{" "}
+              <span
+                className={
+                  (totalUnrealizedPL >= 0
+                    ? "text-green-800 "
+                    : "text-red-900 ") + "text-sm"
+                }
+              >
+                {totalUnrealizedPL >= 0 ? (
+                  <ArrowUpRightIcon className="inline-block w-3 h-3 mr-1 font-black" />
+                ) : (
+                  <ArrowDownRightIcon className="inline-block w-5 h-5 mr-1 font-bold" />
+                )}
+              </span>
+              ${formatCurrency(totalUnrealizedPL)}
+            </div>
           </div>
           <div className="flex items-center space-x-4">
             <Label

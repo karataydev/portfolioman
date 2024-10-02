@@ -63,7 +63,7 @@ export function PieChartComponent({
                 </tspan>
 
                 <tspan x="50%" dy="1.2em" className="font-extralight">
-                  {`${getData.amount ? "$" + getData.amount : ""}`}
+                  {`${getData.amount ? "$" + getData.amount.toFixed(2) : ""}`}
                 </tspan>
               </>
             ) : (

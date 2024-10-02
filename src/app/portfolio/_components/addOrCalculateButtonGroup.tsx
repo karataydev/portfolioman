@@ -9,6 +9,14 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useState } from "react";
 
 interface PurchaseRecommendation {
   symbol: string;
@@ -16,9 +24,16 @@ interface PurchaseRecommendation {
 }
 
 interface AddOrCalculateButtonGroupProps {
-  addStock: (e: React.FormEvent) => void;
+  addStock: (e: AddTransactionData) => void;
   calculatePurchase: (e: React.FormEvent) => void;
   purchaseRecommendation: PurchaseRecommendation[];
+}
+
+export interface AddTransactionData {
+  symbol: string;
+  side: number; // Changed to number
+  quantity: number; // Changed to number
+  avg_price: number; // Changed to number
 }
 
 export function AddOrCalculateButtonGroup({
@@ -26,6 +41,29 @@ export function AddOrCalculateButtonGroup({
   calculatePurchase,
   purchaseRecommendation,
 }: AddOrCalculateButtonGroupProps) {
+  const [formData, setFormData] = useState<AddTransactionData>({
+    symbol: "",
+    side: 0, // Changed to 0 (number)
+    quantity: 0, // Changed to 0 (number)
+    avg_price: 0, // Changed to 0 (number)
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      addStock(formData);
+      setFormData({
+        symbol: "",
+        side: 0, // Changed to 0 (number)
+        quantity: 0, // Changed to 0 (number)
+        avg_price: 0, // Changed to 0 (number)
+      });
+    } catch (error) {
+      console.error("Error adding stock:", error);
+      // Handle error (e.g., show an error message to the user)
+    }
+  };
+
   return (
     <div className="flex flex-wrap justify-between md:justify-end my-6 gap-1 md:gap-4">
       <Dialog>
@@ -41,18 +79,69 @@ export function AddOrCalculateButtonGroup({
           <DialogHeader>
             <DialogTitle>Add Transaction</DialogTitle>
           </DialogHeader>
-          <form onSubmit={addStock} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label htmlFor="symbol">Symbol</Label>
-              <Input id="symbol" type="text" required />
+              <Input
+                id="symbol"
+                type="text"
+                required
+                value={formData.symbol}
+                onChange={(e) =>
+                  setFormData({ ...formData, symbol: e.target.value })
+                }
+              />
             </div>
             <div>
-              <Label htmlFor="shares">Number of Shares</Label>
-              <Input id="shares" type="number" step=".001" required />
+              <Label htmlFor="side">Side</Label>
+              <Select
+                value={formData.side.toString()} // Convert to string for Select component
+                onValueChange={
+                  (value) => setFormData({ ...formData, side: parseInt(value) }) // Parse string to number
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select side" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="0">Buy</SelectItem>
+                  <SelectItem value="1">Sell</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div>
-              <Label htmlFor="currentPrice">Current Price</Label>
-              <Input id="currentPrice" type="number" step=".001" required />
+              <Label htmlFor="quantity">Number of Shares</Label>
+              <Input
+                id="quantity"
+                type="number"
+                step=".001"
+                required
+                value={formData.quantity.toString()} // Convert to string for input
+                onChange={
+                  (e) =>
+                    setFormData({
+                      ...formData,
+                      quantity: parseFloat(e.target.value),
+                    }) // Parse string to number
+                }
+              />
+            </div>
+            <div>
+              <Label htmlFor="avgPrice">Average Price</Label>
+              <Input
+                id="avgPrice"
+                type="number"
+                step=".001"
+                required
+                value={formData.avg_price.toString()} // Convert to string for input
+                onChange={
+                  (e) =>
+                    setFormData({
+                      ...formData,
+                      avg_price: parseFloat(e.target.value),
+                    }) // Parse string to number
+                }
+              />
             </div>
             <DialogFooter>
               <Button type="submit">Add Transaction</Button>

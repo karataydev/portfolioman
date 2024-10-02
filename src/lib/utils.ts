@@ -20,3 +20,8 @@ export function formatCurrency(value: number): string {
     maximumFractionDigits: 2,
   });
 }
+
+
+export function fetchWithBearer(input : any) : Promise<Response> {
+  return fetch(input)
+}

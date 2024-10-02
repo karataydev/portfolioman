@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { PortfolioAllocation } from "@/models/PortfolioAllocation";
 import { Transaction } from "@/models/Transaction";
-import { AddOrCalculateButtonGroup } from "./_components/addOrCalculateButtonGroup";
+import { AddOrCalculateButtonGroup, AddTransactionData } from "./_components/addOrCalculateButtonGroup";
 import { ToggledAllocationsCard } from "./_components/toggledAllocationsCard/ToggledAllocationsCard";
 import { InvestmentGrowthChart } from "./_components/investmentGrowthChart/InvestmentGrowthChart";
 import {
@@ -58,8 +58,34 @@ export default function Portfolio() {
     fetchAssets();
   }, []);
 
-  const addStock = (e: React.FormEvent) => {
-    e.preventDefault();
+  const addStock = async (e: AddTransactionData) => {
+
+    try {
+      const token = localStorage.getItem("auth_token");
+      const response = await fetch(
+        `http://localhost:8080/api/portfolio/add-transaction`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            ...e,
+            portfolio_id: portfolio?.id,
+          }),
+        },
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setPortfolio(data);
+      } else {
+        console.error("Failed to add transaction");
+      }
+    } catch (error) {
+      console.error("Error adding transaction:", error);
+    }
   };
 
   const calculatePurchase = (e: React.FormEvent) => {
