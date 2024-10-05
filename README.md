@@ -45,9 +45,10 @@ Stay tuned for updates as we continue to develop and refine PortfolioMan!
 ## TODO
 
 -- frontend
- - use new backend api
- - make it only client side
- - sign in page or home page with sign in buttons
+ - explore page
+ - show other people portoflios
+ - follow portoflios
+ - see asset detail
  - portfolio create page/dialog
  - portfolio update page/dialog use same as create or update on the portfolio page
 
@@ -56,4 +57,3 @@ Stay tuned for updates as we continue to develop and refine PortfolioMan!
  - portfolio create update api
  - add transaction api
  - calculate new buy api
- - store jwt on backend to revoke?
