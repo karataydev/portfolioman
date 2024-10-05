@@ -3,7 +3,10 @@
 import { useState, useEffect } from "react";
 import { PortfolioAllocation } from "@/models/PortfolioAllocation";
 import { Transaction } from "@/models/Transaction";
-import { AddOrCalculateButtonGroup, AddTransactionData } from "./_components/addOrCalculateButtonGroup";
+import {
+  AddOrCalculateButtonGroup,
+  AddTransactionData,
+} from "./_components/addOrCalculateButtonGroup";
 import { ToggledAllocationsCard } from "./_components/toggledAllocationsCard/ToggledAllocationsCard";
 import { InvestmentGrowthChart } from "./_components/investmentGrowthChart/InvestmentGrowthChart";
 import {
@@ -17,6 +20,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BiEditAlt } from "react-icons/bi";
 import { ComparisonSelector } from "./_components/comparisonSelector/ComparisonSelector";
+import GeneralHeader from "../../_components/GeneralHeader";
+import { useParams } from "next/navigation";
+import { apiFetch } from "@/lib/utils";
 
 export interface Portfolio {
   id: string;
@@ -32,6 +38,8 @@ export interface Portfolio {
 
 export default function Portfolio() {
   const [portfolio, setPortfolio] = useState<Portfolio>();
+  const params = useParams();
+  const portfolioId = params.id as string;
   const [purchaseRecommendation, setPurchaseRecommendation] = useState<
     { symbol: string; sharesToBuy: number }[]
   >([]);
@@ -42,46 +50,39 @@ export default function Portfolio() {
   >(null);
 
   useEffect(() => {
-    async function fetchAssets() {
-      const token = localStorage.getItem("auth_token");
-      const response = await fetch(
-        "http://localhost:8080/api/portfolio/1/allocations",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      ); // Assuming portfolio ID 1
-      const data = await response.json();
-      setPortfolio(data);
+    async function fetchPortfolio() {
+      const { data, error } = await apiFetch<Portfolio>(
+        `http://localhost:8080/api/portfolio/${portfolioId}/allocations`,
+      );
+      if (error) {
+        console.error("Error fetching portfolio:", error);
+      } else if (data) {
+        setPortfolio(data);
+        setEditedName(data.name);
+      }
     }
-    fetchAssets();
-  }, []);
+    if (portfolioId) {
+      fetchPortfolio();
+    }
+  }, [portfolioId]);
 
   const addStock = async (e: AddTransactionData) => {
-
     try {
-      const token = localStorage.getItem("auth_token");
-      const response = await fetch(
+      const { data, error } = await apiFetch<Portfolio>(
         `http://localhost:8080/api/portfolio/add-transaction`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
+          body: {
             ...e,
-            portfolio_id: portfolio?.id,
-          }),
+            portfolio_id: portfolioId,
+          },
         },
       );
 
-      if (response.ok) {
-        const data = await response.json();
+      if (error) {
+        console.error("Failed to add transaction:", error);
+      } else if (data) {
         setPortfolio(data);
-      } else {
-        console.error("Failed to add transaction");
       }
     } catch (error) {
       console.error("Error adding transaction:", error);
@@ -99,34 +100,29 @@ export default function Portfolio() {
 
   const handleSave = async () => {
     if (!portfolio) return;
-    try {
-      const token = localStorage.getItem("auth_token");
-
-      const response = await fetch(`/api/portfolio/${portfolio.id}`, {
+    const { data, error } = await apiFetch<Portfolio>(
+      `/api/portfolio/${portfolioId}`,
+      {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ name: editedName }),
-      });
-      if (response.ok) {
-        setPortfolio({ ...portfolio, name: editedName });
-        setIsEditing(false);
-      } else {
-        console.error("Failed to update portfolio name");
-      }
-    } catch (error) {
-      console.error("Error updating portfolio name:", error);
+        body: { name: editedName },
+      },
+    );
+
+    if (error) {
+      console.error("Failed to update portfolio name:", error);
+    } else if (data) {
+      setPortfolio(data);
+      setIsEditing(false);
     }
   };
 
   return (
     <div className="min-h-screen ">
+      <GeneralHeader className="bg-secondarybackground">{""} </GeneralHeader>
       <div className=" p-4 bg-secondarybackground rounded-br-[2.5rem] rounded-bl-[2.5rem]">
         <div className="container mx-auto md:max-w-6xl text-center">
           <h1
-            className="text-3xl font-semibold my-6 flex-1 tracking-wide cursor-pointer relative inline-block text-center"
+            className="text-xl font-semibold mt-6 mb-2 flex-1 tracking-wide cursor-pointer relative inline-block text-center"
             onClick={handleEditClick}
           >
             <span className="relative">

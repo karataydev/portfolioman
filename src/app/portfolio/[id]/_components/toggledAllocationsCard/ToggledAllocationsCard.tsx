@@ -12,10 +12,7 @@ import {
 import { PieChartComponent } from "./PieChartComponent";
 import { ScrollableAssetList } from "./ScrollableAssetList";
 import { formatCurrency } from "@/lib/utils";
-import {
-  ArrowDownRightIcon,
-  ArrowUpRightIcon,
-} from "@heroicons/react/24/solid";
+import { TrendingDown, TrendingUp } from "lucide-react";
 
 export function ToggledAllocationsCard({
   portfolio,
@@ -74,26 +71,26 @@ export function ToggledAllocationsCard({
         <h2 className="text-xl font-semibold mb-2">Portfolio Value</h2>
         <div className="flex justify-between items-center">
           <div className="flex flex-col">
-            <div className="font-semibold text-2xl text-foreground tracking-wider">
+            <div className="font-semibold text-lg text-foreground tracking-wider">
               ${formatCurrency(totalPortfolioValue)}
             </div>
 
-            <div className="text-sm text-second">
-              P/L:{" "}
+            <div className="text-sm text-second flex items-center">
+              <span className="mr-2">P/L: </span>
+
               <span
                 className={
-                  (totalUnrealizedPL >= 0
-                    ? "text-green-800 "
-                    : "text-red-900 ") + "text-sm"
+                  (totalUnrealizedPL >= 0 ? "text-accentc " : "text-second ") +
+                  "text-sm flex items-center"
                 }
               >
                 {totalUnrealizedPL >= 0 ? (
-                  <ArrowUpRightIcon className="inline-block w-3 h-3 mr-1 font-black" />
+                  <TrendingUp className="mr-1 w-5 h-5 " />
                 ) : (
-                  <ArrowDownRightIcon className="inline-block w-5 h-5 mr-1 font-bold" />
+                  <TrendingDown className="mr-1 w-5 h-5" />
                 )}
+                ${formatCurrency(totalUnrealizedPL)}
               </span>
-              ${formatCurrency(totalUnrealizedPL)}
             </div>
           </div>
           <div className="flex items-center space-x-4">

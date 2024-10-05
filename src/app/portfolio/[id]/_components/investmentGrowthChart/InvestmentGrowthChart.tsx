@@ -15,7 +15,7 @@ import {
   ArrowUpRightIcon,
   ArrowDownRightIcon,
 } from "@heroicons/react/24/solid";
-import { Loader2 } from "lucide-react"; // Import the loading spinner
+import { Loader2, TrendingDown, TrendingUp } from "lucide-react"; // Import the loading spinner
 import * as chartData from "./chartData";
 import { renderChartLines } from "./chartLine";
 import { calculatePercentage } from "@/lib/utils";
@@ -113,25 +113,30 @@ export function InvestmentGrowthChart({
       </div>
       <div className="h-64 relative">
         <div className="absolute top-0 left-0 p-2 bg-background bg-opacity-75 rounded font-semibold text-lg text-foreground tracking-wider">
-          $
-          {selectedPrice !== null
-            ? selectedPrice.toFixed(2)
-            : latestPrice.toFixed(2)}{" "}
-          <span
-            className={
-              (isUp() ? "text-green-600 " : "text-red-600 ") + "ml-1 text-sm"
-            }
-          >
-            {isUp() ? (
-              <ArrowUpRightIcon className="inline-block w-5 h-5 mr-1 font-black" />
-            ) : (
-              <ArrowDownRightIcon className="inline-block w-5 h-5 mr-1 font-bold" />
-            )}
-            {selectedPrice !== null
-              ? calculatePercentage(selectedPrice, initialValue).toFixed(2)
-              : calculatePercentage(latestPrice, initialValue).toFixed(2)}
-            %
-          </span>
+          <div className="flex items-center">
+            <span>
+              $
+              {selectedPrice !== null
+                ? selectedPrice.toFixed(2)
+                : latestPrice.toFixed(2)}{" "}
+            </span>
+            <span
+              className={
+                (isUp() ? "text-accentc " : "text-second ") +
+                "ml-1 text-sm flex items-center"
+              }
+            >
+              {isUp() ? (
+                <TrendingUp className="mr-1 w-5 h-5 text-accentc" />
+              ) : (
+                <TrendingDown className="mr-1 w-5 h-5 text-second" />
+              )}
+              {selectedPrice !== null
+                ? calculatePercentage(selectedPrice, initialValue).toFixed(2)
+                : calculatePercentage(latestPrice, initialValue).toFixed(2)}
+              %
+            </span>
+          </div>
           {selectedComparedAsset && (
             <p className="text-sm mt-1 text-start text-second tracking-normal font-normal">
               Compared: $

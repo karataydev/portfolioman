@@ -1,3 +1,5 @@
+import { apiFetch } from "@/lib/utils";
+
 export interface DataPoint {
   timestamp: number;
   value: number;
@@ -12,22 +14,17 @@ export interface InvestmentGrowthChartResponse {
 
 export async function fetchInvestmentGrowth(
   symbol: string,
-): Promise<InvestmentGrowthChartResponse> {
-  try {
-    const token = localStorage.getItem("auth_token");
-    const response = await fetch(
-      `http://localhost:8080/api/investment-growth/${symbol}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      },
-    );
-    return (await response.json()) as InvestmentGrowthChartResponse;
-  } catch (error) {
+): Promise<InvestmentGrowthChartResponse | null> {
+  const { data, error } = await apiFetch<InvestmentGrowthChartResponse>(
+    `http://localhost:8080/api/investment-growth/${symbol}`,
+  );
+
+  if (error) {
     console.error("Error fetching investment growth data:", error);
-    throw error;
+    return null;
   }
+
+  return data;
 }
 
 export const getDescription = (selectedPeriod: string) => {

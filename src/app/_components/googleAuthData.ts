@@ -1,5 +1,11 @@
 import { TokenResponse } from "@react-oauth/google";
 
+export interface LoginResponse {
+  user: User;
+  access_token: string;
+}
+
+
 export interface User {
   id: number;
   email: string;
@@ -12,7 +18,7 @@ export interface User {
 export async function handleGoogleResponse(
   tokenResponse: TokenResponse,
   isSignUp: boolean,
-  setUser: (user: User | null) => void,
+  setLoginDetails: (loginDetails: LoginResponse | null) => void,
 ) {
   console.log("Google Token:", tokenResponse);
 
@@ -31,9 +37,8 @@ export async function handleGoogleResponse(
 
     if (response.ok) {
       const data = await response.json();
-      setUser(data.user);
-      localStorage.setItem("auth_token", data.access_token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      setLoginDetails(data);
+      localStorage.setItem("loginDetails", JSON.stringify(data));
     } else {
       console.error("Authentication failed");
     }

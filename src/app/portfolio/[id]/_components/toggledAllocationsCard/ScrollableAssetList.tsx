@@ -14,7 +14,7 @@ export function ScrollableAssetList({
   scrollAreaRef: React.RefObject<HTMLDivElement>;
 }) {
   return (
-    <ScrollArea className="h-[300px]" ref={scrollAreaRef}>
+    <ScrollArea className="max-h-[300px]" ref={scrollAreaRef}>
       {assets.map((asset, index) => (
         <div
           key={index}
