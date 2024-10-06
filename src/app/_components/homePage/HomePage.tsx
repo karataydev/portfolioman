@@ -1,25 +1,21 @@
 import { LoginResponse } from "../googleAuthData";
 import {
-  Home,
-  Search,
-  Bell,
-  User,
   Plus,
   TrendingUp,
   TrendingDown,
   Rocket,
   Star,
-  BadgeDollarSign,
   ShoppingBasket,
 } from "lucide-react";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Card, CardContent } from "@/components/ui/card";
-import GeneralHeader from "../GeneralHeader";
 import PortfolioScrollArea from "./PortfolioScrollArea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { fetchData, PortfolioListResponse } from "./homePageData";
+import { fetchData, newPortfolio, PortfolioListResponse } from "./homePageData";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import {
+  PortfolioDialog,
+  PortfolioRequest,
+} from "../portfolio/PortfolioDialog";
 
 export default function HomePage({
   loginDetails,
@@ -28,48 +24,14 @@ export default function HomePage({
   loginDetails: LoginResponse;
   logoutAction: () => void;
 }) {
-  const [portfolios, setPortfolios] = useState<PortfolioListResponse[]>([
-    { name: "Tech Stocks", amount: 50000.12, change: 1.2 },
-    { name: "Green Energy", amount: 30000, change: -0.8 },
-    { name: "Crypto Mix", amount: 20000, change: 5.5 },
-    { name: "Blue Chips", amount: 40000, change: 0.3 },
-    { name: "Emerging Markets", amount: 15000, change: -1.5 },
-  ]);
+  const [portfolios, setPortfolios] = useState<PortfolioListResponse[]>([]);
 
   const [followedPortfolios, setFollowedPortfolios] = useState<
     PortfolioListResponse[]
-  >([
-    {
-      name: "Dividend Kings",
-      amount: 75000,
-      change: -0.5,
-      owner: "@investor_pro",
-    },
-    {
-      name: "Growth Rockets",
-      amount: 100000,
-      change: 2.1,
-      owner: "@tech_guru",
-    },
-    { name: "Value Picks", change: 0.7, owner: "@value_hunter" },
-    { name: "Index Plus", amount: 200000, change: 0.9, owner: "@index_master" },
-    {
-      name: "Small Caps",
-      amount: 40000,
-      change: -1.2,
-      owner: "@small_cap_fan",
-    },
-  ]);
+  >([]);
 
   const [marketOverview, setMarketOverview] = useState<PortfolioListResponse[]>(
-    [
-      { name: "S&P 500", amount: 4185.81, change: 0.98 },
-      { name: "Nasdaq", amount: 12888.28, change: 1.3 },
-      { name: "Dow Jones", amount: 33875.4, change: 0.8 },
-      { name: "Bitcoin", amount: 39123.45, change: -2.15 },
-      { name: "Gold", amount: 1892.5, change: 0.25 },
-      { name: "Crude Oil", amount: 75.23, change: -1.05 },
-    ],
+    [],
   );
 
   const totalPortfolioValue = portfolios.reduce(
@@ -86,6 +48,12 @@ export default function HomePage({
   useEffect(() => {
     fetchData(setPortfolios, setFollowedPortfolios, setMarketOverview);
   }, []);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleNewPortfolio = (req: PortfolioRequest) => {
+    newPortfolio(req);
+  };
 
   return (
     <>
@@ -117,10 +85,20 @@ export default function HomePage({
                 <Rocket className="h-5 w-5 text-accentc mr-2" /> Your Portfolios{" "}
               </span>
             </h2>
-            <Button className="px-4 md:px-8 md:py-4">
-              <Plus size={16} className="mr-1" />
-              New
-            </Button>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="px-4 md:px-8 md:py-4">
+                  <Plus size={16} className="mr-1" />
+                  New
+                </Button>
+              </DialogTrigger>
+              <PortfolioDialog
+                isEdit={false}
+                handleAccept={handleNewPortfolio}
+                isOpen={isDialogOpen}
+                onClose={() => setIsDialogOpen(false)}
+              />
+            </Dialog>
           </div>
           <PortfolioScrollArea
             emptyMessage="Create your own portfolio using new button to start investing."

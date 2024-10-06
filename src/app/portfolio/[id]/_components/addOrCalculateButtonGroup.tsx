@@ -47,6 +47,8 @@ export function AddOrCalculateButtonGroup({
     quantity: 0, // Changed to 0 (number)
     avg_price: 0, // Changed to 0 (number)
   });
+  const [isAddTransactionOpen, setIsAddTransactionOpen] = useState(false);
+  const [isCalculatePurchaseOpen, setIsCalculatePurchaseOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,6 +60,7 @@ export function AddOrCalculateButtonGroup({
         quantity: 0, // Changed to 0 (number)
         avg_price: 0, // Changed to 0 (number)
       });
+      setIsAddTransactionOpen(false);
     } catch (error) {
       console.error("Error adding stock:", error);
       // Handle error (e.g., show an error message to the user)
@@ -66,11 +69,15 @@ export function AddOrCalculateButtonGroup({
 
   return (
     <div className="flex flex-wrap justify-between md:justify-end my-6 gap-1 md:gap-4">
-      <Dialog>
+      <Dialog
+        open={isAddTransactionOpen}
+        onOpenChange={setIsAddTransactionOpen}
+      >
         <DialogTrigger asChild>
           <Button
             variant="third"
             className="px-4 flex-grow md:flex-grow-0 md:px-8 md:py-4"
+            onClick={() => setIsAddTransactionOpen(true)}
           >
             Add Transaction
           </Button>
@@ -143,16 +150,35 @@ export function AddOrCalculateButtonGroup({
                 }
               />
             </div>
-            <DialogFooter>
-              <Button type="submit">Add Transaction</Button>
+            <DialogFooter className="flex space-x-0 flex-row">
+              <div className="w-1/3 pr-2">
+                <Button
+                  variant="third"
+                  onClick={() => setIsAddTransactionOpen(false)}
+                  className="w-full"
+                >
+                  Cancel
+                </Button>
+              </div>
+              <div className="w-2/3 pl-2">
+                <Button className="w-full" type="submit">
+                  Add Transaction
+                </Button>
+              </div>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
 
-      <Dialog>
+      <Dialog
+        open={isCalculatePurchaseOpen}
+        onOpenChange={setIsCalculatePurchaseOpen}
+      >
         <DialogTrigger asChild>
-          <Button className="px-4 flex-grow md:flex-grow-0 md:px-8 md:py-4">
+          <Button
+            className="px-4 flex-grow md:flex-grow-0 md:px-8 md:py-4"
+            onClick={() => setIsCalculatePurchaseOpen(true)}
+          >
             Calculate Purchase
           </Button>
         </DialogTrigger>
@@ -165,8 +191,21 @@ export function AddOrCalculateButtonGroup({
               <Label htmlFor="purchaseAmount">Purchase Amount ($)</Label>
               <Input id="purchaseAmount" type="number" />
             </div>
-            <DialogFooter>
-              <Button onClick={calculatePurchase}>Calculate</Button>
+            <DialogFooter className="flex space-x-0 flex-row">
+              <div className="w-1/3 pr-2">
+                <Button
+                  variant="third"
+                  onClick={() => setIsCalculatePurchaseOpen(false)}
+                  className="w-full"
+                >
+                  Cancel
+                </Button>
+              </div>
+              <div className="w-2/3 pl-2">
+                <Button onClick={calculatePurchase} className="w-full">
+                  Calculate
+                </Button>
+              </div>
             </DialogFooter>
           </div>
         </DialogContent>

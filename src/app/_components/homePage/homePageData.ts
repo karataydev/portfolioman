@@ -1,4 +1,6 @@
+import { Portfolio } from "@/app/portfolio/[id]/page";
 import { apiFetch } from "@/lib/utils";
+import { PortfolioRequest } from "../portfolio/PortfolioDialog";
 
 export interface PortfolioListResponse {
   id: number;
@@ -62,4 +64,18 @@ export const fetchData = (
       }
     },
   );
+};
+
+export const newPortfolio = async (req: PortfolioRequest) => {
+  const { data, error } = await apiFetch<Portfolio>(
+    "http://localhost:8080/api/portfolio",
+    {
+      method: "POST",
+      body: req,
+    },
+  );
+  if (error) {
+    console.log("error in new portfolio");
+  }
+  return data;
 };
