@@ -23,7 +23,7 @@ export default function PortfolioScrollArea({
           portfolios.map((portfolio, index) => (
             <Card
               key={index}
-              className="w-[150px] h-[150px] bg-secondarybackground border-0"
+              className="w-[150px] h-[150px] bg-secondarybackground border-0 cursor-pointer transition-shadow hover:shadow-md"
             >
               <CardContent
                 className="text-foreground p-4 flex flex-col justify-between h-full"
