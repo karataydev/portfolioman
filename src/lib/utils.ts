@@ -21,22 +21,21 @@ export function formatCurrency(value: number): string {
   });
 }
 
-
-export function fetchWithBearer(input : any) : Promise<Response> {
-  return fetch(input)
+export function fetchWithBearer(input: any): Promise<Response> {
+  return fetch(input);
 }
-
 
 export interface ApiResponse<T = any> {
   data: T | null;
   error: string | null;
 }
 
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
-interface ApiFetchOptions extends Omit<RequestInit, 'method' | 'body'> {
+interface ApiFetchOptions extends Omit<RequestInit, "method" | "body"> {
   method?: HttpMethod;
   body?: object;
+  useCustomUrl: boolean;
 }
 
 async function getAuthToken(): Promise<string | null> {
@@ -47,29 +46,37 @@ async function getAuthToken(): Promise<string | null> {
 
 export async function apiFetch<T = any>(
   input: RequestInfo,
-  options: ApiFetchOptions = {}
+  options: ApiFetchOptions = {
+    useCustomUrl: false,
+  },
 ): Promise<ApiResponse<T>> {
   try {
+    const serverUrl = "http://localhost:8080";
+    if (!options.useCustomUrl) {
+      input = serverUrl + input;
+    }
+    console.log("BreakPoint1");
+
     const token = await getAuthToken();
-    
+
     const headers = new Headers(options.headers || {});
     if (token) {
-      headers.set('Authorization', `Bearer ${token}`);
+      headers.set("Authorization", `Bearer ${token}`);
     }
 
     // If it's not GET and there's a body, stringify it and set content type
-    if (options.method && options.method !== 'GET' && options.body) {
-      headers.set('Content-Type', 'application/json');
+    if (options.method && options.method !== "GET" && options.body) {
+      headers.set("Content-Type", "application/json");
     }
 
     const config: RequestInit = {
       ...options,
       headers,
-      method: options.method || 'GET',
+      method: options.method || "GET",
     };
 
     // Only add body for non-GET requests
-    if (options.method && options.method !== 'GET' && options.body) {
+    if (options.method && options.method !== "GET" && options.body) {
       config.body = JSON.stringify(options.body);
     }
 
@@ -83,9 +90,10 @@ export async function apiFetch<T = any>(
     return { data, error: null };
   } catch (error) {
     console.error("API request failed:", error);
-    return { 
-      data: null, 
-      error: error instanceof Error ? error.message : "An unknown error occurred" 
+    return {
+      data: null,
+      error:
+        error instanceof Error ? error.message : "An unknown error occurred",
     };
   }
 }

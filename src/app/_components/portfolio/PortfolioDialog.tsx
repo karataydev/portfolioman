@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DialogContent,
@@ -7,16 +8,8 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useState, useEffect } from "react";
 import { Trash2, Plus } from "lucide-react";
-import { newPortfolio } from "../homePage/homePageData";
+import AssetSelector from "@/components/AssetSelector";
 
 export interface PortfolioRequest {
   name: string;
@@ -28,13 +21,6 @@ export interface AllocationRequest {
   asset_id: number;
   target_percentage: number;
 }
-
-// Mock data for assets
-const mockAssets = [
-  { id: 1, name: "Asset 1" },
-  { id: 2, name: "Asset 2" },
-  { id: 3, name: "Asset 3" },
-];
 
 export function PortfolioDialog({
   isEdit = false,
@@ -68,34 +54,40 @@ export function PortfolioDialog({
     try {
       handleAccept(formData);
     } catch (error) {
-      console.error("Error handle portfolio:", error);
+      console.error("Error handling portfolio:", error);
     }
   };
 
   const addAllocation = () => {
-    setFormData({
-      ...formData,
+    setFormData(prev => ({
+      ...prev,
       allocations: [
-        ...formData.allocations,
+        ...prev.allocations,
         { asset_id: 0, target_percentage: 0 },
       ],
-    });
+    }));
   };
 
   const updateAllocation = (
     index: number,
     field: keyof AllocationRequest,
-    value: number,
+    value: number
   ) => {
-    const newAllocations = [...formData.allocations];
-    newAllocations[index] = { ...newAllocations[index], [field]: value };
-    setFormData({ ...formData, allocations: newAllocations });
+    setFormData(prev => {
+      const newAllocations = [...prev.allocations];
+      newAllocations[index] = { ...newAllocations[index], [field]: value };
+      return { ...prev, allocations: newAllocations };
+    });
   };
 
   const removeAllocation = (index: number) => {
-    const newAllocations = formData.allocations.filter((_, i) => i !== index);
-    setFormData({ ...formData, allocations: newAllocations });
+    setFormData(prev => ({
+      ...prev,
+      allocations: prev.allocations.filter((_, i) => i !== index),
+    }));
   };
+
+  console.log('PortfolioDialog rendered. Current formData:', formData);
 
   return (
     <DialogContent className="sm:max-w-[625px]">
@@ -110,7 +102,7 @@ export function PortfolioDialog({
             type="text"
             required
             value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
           />
         </div>
         <div>
@@ -119,9 +111,7 @@ export function PortfolioDialog({
             id="portfolio_description"
             type="text"
             value={formData.description}
-            onChange={(e) =>
-              setFormData({ ...formData, description: e.target.value })
-            }
+            onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
           />
         </div>
         <div>
@@ -134,22 +124,10 @@ export function PortfolioDialog({
           {formData.allocations.map((allocation, index) => (
             <div key={index} className="flex justify-between mt-2 items-center">
               <div className="flex space-x-2 flex-grow">
-                <Select
-                  onValueChange={(value) =>
-                    updateAllocation(index, "asset_id", Number(value))
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select an asset" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mockAssets.map((asset) => (
-                      <SelectItem key={asset.id} value={asset.id.toString()}>
-                        {asset.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <AssetSelector
+                  onSelect={(value) => updateAllocation(index, "asset_id", value)}
+                  value={allocation.asset_id}
+                />
                 <Input
                   type="number"
                   placeholder="Target %"
@@ -158,7 +136,7 @@ export function PortfolioDialog({
                     updateAllocation(
                       index,
                       "target_percentage",
-                      Number(e.target.value),
+                      parseFloat(e.target.value)
                     )
                   }
                   className="w-24"
