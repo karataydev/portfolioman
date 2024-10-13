@@ -1,21 +1,24 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { Check, ChevronsUpDown } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+"use client";
+
+import * as React from "react";
+import { ChevronDown, Check, Loader2 } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-} from "@/components/ui/command"
+  CommandList,
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import debounce from 'lodash/debounce';
-import { apiFetch } from '@/lib/utils';
+} from "@/components/ui/popover";
+import { apiFetch } from "@/lib/utils";
 
 interface SimpleAssetDTO {
   id: number;
@@ -35,67 +38,80 @@ interface AssetSelectorProps {
   onSelect: (assetId: number) => void;
   value: number | null;
 }
-const AssetSelector: React.FC<AssetSelectorProps> = ({ onSelect, value }) => {
-  const [open, setOpen] = useState(false);
-  const [assets, setAssets] = useState<SimpleAssetDTO[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [query, setQuery] = useState('');
 
-  console.log('Component rendered. Current query:', query);
+export default function AssetSelector({ onSelect, value }: AssetSelectorProps) {
+  const [open, setOpen] = React.useState(false);
+  const [assets, setAssets] = React.useState<SimpleAssetDTO[]>([]);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [query, setQuery] = React.useState("");
+  const [page, setPage] = React.useState(1);
+  const [hasMore, setHasMore] = React.useState(true);
 
-  const fetchAssets = useCallback(async (searchQuery: string) => {
-    console.log('fetchAssets called with query:', searchQuery);
-    setLoading(true);
-    try {
-      // Simulating API call for now
-      console.log('Would fetch assets with query:', searchQuery);
-      // Uncomment the following lines when ready to make actual API calls
-      // const { data, error } = await apiFetch<AssetResponse>(`/api/assets?q=${encodeURIComponent(searchQuery)}&limit=10&page=1`);
-      // if (error) {
-      //   console.error('Error fetching assets:', error);
-      //   setAssets([]);
-      // } else if (data && Array.isArray(data.assets)) {
-      //   setAssets(data.assets);
-      // } else {
-      //   console.error('Invalid data format received:', data);
-      //   setAssets([]);
-      // }
-    } catch (error) {
-      console.error('Error in fetchAssets:', error);
-      setAssets([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const observerTarget = React.useRef<HTMLDivElement>(null);
 
-  const debouncedFetch = useMemo(
-    () => debounce((searchQuery: string) => {
-      console.log('Debounced function called with query:', searchQuery);
-      fetchAssets(searchQuery);
-    }, 300),
-    [fetchAssets]
+  const fetchAssets = React.useCallback(
+    async (searchQuery: string, pageNum: number) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await apiFetch<AssetResponse>(
+          `/api/asset/search?q=${encodeURIComponent(searchQuery)}&limit=20&page=${pageNum}`,
+        );
+        if ("error" in response && response.error) {
+          setError("Error fetching assets. Please try again.");
+        } else if ("data" in response && response.data) {
+          setAssets((prevAssets) =>
+            pageNum === 1
+              ? response.data.assets
+              : [...prevAssets, ...response.data.assets],
+          );
+          setHasMore(response.data.page < response.data.total_pages);
+        } else {
+          setError("Received invalid data from the server.");
+        }
+      } catch (error) {
+        setError("An unexpected error occurred. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
   );
 
-  useEffect(() => {
-    console.log('useEffect triggered. Query:', query);
-    if (query) {
-      console.log('Calling debouncedFetch with query:', query);
-      debouncedFetch(query);
-    } else {
-      console.log('Query is empty, clearing assets');
-      setAssets([]);
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setPage(1);
+      fetchAssets(query, 1);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [query, fetchAssets]);
+
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loading) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      },
+      { threshold: 1.0 },
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
     }
 
-    return () => {
-      console.log('Cleanup: cancelling debounced fetch');
-      debouncedFetch.cancel();
-    };
-  }, [query, debouncedFetch]);
+    return () => observer.disconnect();
+  }, [hasMore, loading]);
 
-  const handleSearch = useCallback((search: string) => {
-    console.log('handleSearch called with:', search);
-    setQuery(search);
-  }, []);
+  React.useEffect(() => {
+    if (page > 1) {
+      fetchAssets(query, page);
+    }
+  }, [page, query, fetchAssets]);
+
+  const selectedAsset = assets.find((asset) => asset.id === value);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -104,24 +120,24 @@ const AssetSelector: React.FC<AssetSelectorProps> = ({ onSelect, value }) => {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between"
+          className="w-[200px] justify-between"
         >
-          {value !== null
-            ? assets.find((asset) => asset.id === value)?.name || "Select asset..."
-            : "Select asset..."}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          {selectedAsset ? selectedAsset.name : "Select asset..."}
+          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0">
+      <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput 
-            placeholder="Search assets..." 
-            onValueChange={handleSearch} 
+          <CommandInput
+            placeholder="Search asset..."
+            className="h-9"
+            value={query}
+            onValueChange={setQuery}
           />
-          <CommandEmpty>{loading ? "Loading..." : "No asset found."}</CommandEmpty>
-          <CommandGroup>
-            {assets.length > 0 ? (
-              assets.map((asset) => (
+          <CommandList className="max-h-[200px] overflow-y-auto">
+            <CommandEmpty>{error || "No asset found."}</CommandEmpty>
+            <CommandGroup>
+              {assets.map((asset) => (
                 <CommandItem
                   key={asset.id}
                   value={asset.id.toString()}
@@ -130,23 +146,25 @@ const AssetSelector: React.FC<AssetSelectorProps> = ({ onSelect, value }) => {
                     setOpen(false);
                   }}
                 >
+                  {asset.name} ({asset.symbol})
                   <Check
                     className={cn(
-                      "mr-2 h-4 w-4",
-                      value === asset.id ? "opacity-100" : "opacity-0"
+                      "ml-auto h-4 w-4",
+                      value === asset.id ? "opacity-100" : "opacity-0",
                     )}
                   />
-                  {asset.name} ({asset.symbol})
                 </CommandItem>
-              ))
-            ) : (
-              <CommandItem disabled>No assets found</CommandItem>
-            )}
-          </CommandGroup>
+              ))}
+            </CommandGroup>
+            {hasMore && <div ref={observerTarget} className="h-1" />}
+          </CommandList>
+          {loading && (
+            <div className="flex justify-center p-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+            </div>
+          )}
         </Command>
       </PopoverContent>
     </Popover>
   );
-};
-
-export default AssetSelector;
+}

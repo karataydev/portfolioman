@@ -59,21 +59,18 @@ export function PortfolioDialog({
   };
 
   const addAllocation = () => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      allocations: [
-        ...prev.allocations,
-        { asset_id: 0, target_percentage: 0 },
-      ],
+      allocations: [...prev.allocations, { asset_id: 0, target_percentage: 0 }],
     }));
   };
 
   const updateAllocation = (
     index: number,
     field: keyof AllocationRequest,
-    value: number
+    value: number,
   ) => {
-    setFormData(prev => {
+    setFormData((prev) => {
       const newAllocations = [...prev.allocations];
       newAllocations[index] = { ...newAllocations[index], [field]: value };
       return { ...prev, allocations: newAllocations };
@@ -81,13 +78,13 @@ export function PortfolioDialog({
   };
 
   const removeAllocation = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       allocations: prev.allocations.filter((_, i) => i !== index),
     }));
   };
 
-  console.log('PortfolioDialog rendered. Current formData:', formData);
+  console.log("PortfolioDialog rendered. Current formData:", formData);
 
   return (
     <DialogContent className="sm:max-w-[625px]">
@@ -102,7 +99,9 @@ export function PortfolioDialog({
             type="text"
             required
             value={formData.name}
-            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, name: e.target.value }))
+            }
           />
         </div>
         <div>
@@ -111,7 +110,9 @@ export function PortfolioDialog({
             id="portfolio_description"
             type="text"
             value={formData.description}
-            onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, description: e.target.value }))
+            }
           />
         </div>
         <div>
@@ -125,8 +126,10 @@ export function PortfolioDialog({
             <div key={index} className="flex justify-between mt-2 items-center">
               <div className="flex space-x-2 flex-grow">
                 <AssetSelector
-                  onSelect={(value) => updateAllocation(index, "asset_id", value)}
-                  value={allocation.asset_id}
+                  onSelect={(value) =>
+                    updateAllocation(index, "asset_id", value)
+                  }
+                  value={allocation.asset_id > 0 ? allocation.asset_id : null}
                 />
                 <Input
                   type="number"
@@ -136,7 +139,7 @@ export function PortfolioDialog({
                     updateAllocation(
                       index,
                       "target_percentage",
-                      parseFloat(e.target.value)
+                      parseFloat(e.target.value),
                     )
                   }
                   className="w-24"
