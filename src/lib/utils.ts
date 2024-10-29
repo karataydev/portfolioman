@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -51,7 +53,7 @@ export async function apiFetch<T = any>(
   },
 ): Promise<ApiResponse<T>> {
   try {
-    const serverUrl = "http://localhost:8080";
+    const serverUrl = API_URL;
     if (!options.useCustomUrl) {
       input = serverUrl + input;
     }
