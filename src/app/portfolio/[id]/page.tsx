@@ -52,7 +52,7 @@ export default function Portfolio() {
   useEffect(() => {
     async function fetchPortfolio() {
       const { data, error } = await apiFetch<Portfolio>(
-        `http://localhost:8080/api/portfolio/${portfolioId}/allocations`,
+        `/api/portfolio/${portfolioId}/allocations`,
       );
       if (error) {
         console.error("Error fetching portfolio:", error);
@@ -69,7 +69,7 @@ export default function Portfolio() {
   const addStock = async (e: AddTransactionData) => {
     try {
       const { data, error } = await apiFetch<Portfolio>(
-        `http://localhost:8080/api/portfolio/add-transaction`,
+        `/api/portfolio/add-transaction`,
         {
           method: "POST",
           body: {

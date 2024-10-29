@@ -35,7 +35,7 @@ type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 interface ApiFetchOptions extends Omit<RequestInit, "method" | "body"> {
   method?: HttpMethod;
   body?: object;
-  useCustomUrl: boolean;
+  useCustomUrl?: boolean;
 }
 
 async function getAuthToken(): Promise<string | null> {
@@ -55,7 +55,6 @@ export async function apiFetch<T = any>(
     if (!options.useCustomUrl) {
       input = serverUrl + input;
     }
-    console.log("BreakPoint1");
 
     const token = await getAuthToken();
 

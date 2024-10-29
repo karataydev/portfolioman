@@ -16,7 +16,7 @@ export async function fetchInvestmentGrowth(
   symbol: string,
 ): Promise<InvestmentGrowthChartResponse | null> {
   const { data, error } = await apiFetch<InvestmentGrowthChartResponse>(
-    `http://localhost:8080/api/investment-growth/${symbol}`,
+    `/api/investment-growth/${symbol}`,
   );
 
   if (error) {

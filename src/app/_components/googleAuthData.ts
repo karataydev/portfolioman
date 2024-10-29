@@ -1,10 +1,10 @@
 import { TokenResponse } from "@react-oauth/google";
+import { apiFetch } from "@/lib/utils";
 
 export interface LoginResponse {
   user: User;
   access_token: string;
 }
-
 
 export interface User {
   id: number;
@@ -22,27 +22,17 @@ export async function handleGoogleResponse(
 ) {
   console.log("Google Token:", tokenResponse);
 
-  const endpoint = isSignUp
-    ? "http://localhost:8080/api/auth/signup"
-    : "http://localhost:8080/api/auth/signin";
+  const endpoint = isSignUp ? "/api/auth/signup" : "/api/auth/signin";
 
-  try {
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ google_token: tokenResponse.access_token }),
-    });
+  const { data, error } = await apiFetch(endpoint, {
+    method: "POST",
+    body: { google_token: tokenResponse.access_token },
+  });
 
-    if (response.ok) {
-      const data = await response.json();
-      setLoginDetails(data);
-      localStorage.setItem("loginDetails", JSON.stringify(data));
-    } else {
-      console.error("Authentication failed");
-    }
-  } catch (error) {
+  if (error) {
     console.error("Error during authentication:", error);
+    return;
   }
+  setLoginDetails(data);
+  localStorage.setItem("loginDetails", JSON.stringify(data));
 }
