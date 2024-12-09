@@ -53,11 +53,12 @@ export function InvestmentGrowthChart({
   }, [portfolioSymbol]);
 
   const latestPrice = useMemo(
-    () => data[data?.length - 1]?.value || 1000,
+    () => (data && data[data.length - 1]?.value) || 1000,
     [data],
   );
 
   const { minValue, maxValue } = useMemo(() => {
+    if (!data) return { minValue: 0, maxValue: 0 };
     const values = data.map((d) => d.value);
     return {
       minValue: Math.min(...values),
@@ -97,12 +98,15 @@ export function InvestmentGrowthChart({
   );
 
   const allData = useMemo(() => {
+    if (!data) return [];
     const mainData = data.map((d) => ({ ...d, main: d.value }));
-    compareData.forEach((point, index) => {
-      if (index < mainData.length) {
-        mainData[index] = { ...mainData[index], compared: point.value };
-      }
-    });
+    if (compareData) {
+      compareData.forEach((point, index) => {
+        if (index < mainData.length) {
+          mainData[index] = { ...mainData[index], compared: point.value };
+        }
+      });
+    }
     return mainData;
   }, [data, compareData]);
 
